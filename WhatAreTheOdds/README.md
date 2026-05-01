@@ -1,4 +1,4 @@
-# LineDesk Sports Odds Intelligence
+# WhatAreTheOdds Sports Betting
 
 A polished static prototype for a premium sports odds comparison product.
 
