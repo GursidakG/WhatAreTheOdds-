@@ -2,19 +2,14 @@
 
 A polished static prototype for a premium sports odds comparison product.
 
-## Open Locally
+## Live demo link
 
-Open `index.html` directly in a browser, or run a local server:
+https://whataretheodds-three.vercel.app
 
-```bash
-python3 -m http.server 4173
-```
+## Screenshots
 
-Then visit:
+<img width="1420" height="668" alt="Screenshot 2026-05-01 at 2 19 11 AM" src="https://github.com/user-attachments/assets/241fa6ff-38d6-401e-a127-a2b16f2af791" />
 
-```text
-http://127.0.0.1:4173
-```
 
 ## Included
 
