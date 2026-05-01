@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LineDesk Sports Odds Intelligence</title>
+    <meta
+      name="description"
+      content="Premium sports odds comparison interface with live markets, value finder, bet tracking, and responsible betting controls."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0b'/%3E%3Cpath d='M12 13h40v9H23v29H12V13Zm20 18h20v9H32v-9Z' fill='%23c8ff00'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-labelledby="ageGateTitle">
+      <div class="age-gate__panel">
+        <p class="eyebrow">Jurisdiction Check</p>
+        <h1 id="ageGateTitle">Confirm eligibility</h1>
+        <p class="muted">
+          LineDesk is an odds intelligence demo. Confirm that you meet your local age requirement before viewing market data.
+        </p>
+        <form id="ageForm" novalidate>
+          <div class="field-grid">
+            <label>
+              Month
+              <input id="dobMonth" name="month" inputmode="numeric" autocomplete="bday-month" placeholder="MM" maxlength="2" />
+            </label>
+            <label>
+              Day
+              <input id="dobDay" name="day" inputmode="numeric" autocomplete="bday-day" placeholder="DD" maxlength="2" />
+            </label>
+            <label>
+              Year
+              <input id="dobYear" name="year" inputmode="numeric" autocomplete="bday-year" placeholder="YYYY" maxlength="4" />
+            </label>
+          </div>
+          <label>
+            Region
+            <select id="region" name="region">
+              <option value="">Select region</option>
+              <option>Ontario</option>
+              <option>New Jersey</option>
+              <option>Nevada</option>
+              <option>United Kingdom</option>
+            </select>
+          </label>
+          <p class="form-error" id="ageError" role="alert"></p>
+          <button class="button button--primary" type="submit">Enter LineDesk</button>
+          <p class="legal-copy">
+            View responsibly. Set limits, avoid chasing losses, and use local support resources when betting stops being recreational.
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <aside class="rail" aria-label="Primary navigation">
+        <div class="brand" aria-label="LineDesk home">
+          <span class="brand__mark">LD</span>
+          <span class="brand__text">LineDesk</span>
+        </div>
+        <nav class="rail__nav">
+          <button class="nav-item is-active" data-view="lobby" aria-label="Open lobby">
+            <span class="icon" aria-hidden="true">⌂</span><span>Lobby</span>
+          </button>
+          <button class="nav-item" data-view="odds" aria-label="Open odds board">
+            <span class="icon" aria-hidden="true">≋</span><span>Odds</span>
+          </button>
+          <button class="nav-item" data-view="live" aria-label="Open live markets">
+            <span class="icon" aria-hidden="true">●</span><span>Live</span>
+          </button>
+          <button class="nav-item" data-view="value" aria-label="Open value finder">
+            <span class="icon" aria-hidden="true">%</span><span>Value</span>
+          </button>
+          <button class="nav-item" data-view="tracker" aria-label="Open bet tracker">
+            <span class="icon" aria-hidden="true">▦</span><span>Tracker</span>
+          </button>
+        </nav>
+        <button class="rail__limit" id="limitButton" type="button">Set Limit</button>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div class="ticker" aria-label="Live scores and market movement">
+            <span class="ticker__status">Live</span>
+            <div class="ticker__track" id="tickerTrack"></div>
+          </div>
+          <div class="topbar__actions">
+            <button class="ghost-button" id="refreshButton" type="button">Refresh</button>
+            <button class="button button--primary" id="openSlipButton" type="button">BetSlip <span id="slipCount">0</span></button>
+          </div>
+        </header>
+
+        <nav class="sport-tabs" aria-label="Sports">
+          <button class="sport-tab is-active" type="button">NBA <span>8</span></button>
+          <button class="sport-tab" type="button">NFL <span>3</span></button>
+          <button class="sport-tab" type="button">MLB <span>12</span></button>
+          <button class="sport-tab" type="button">NHL <span>5</span></button>
+          <button class="sport-tab" type="button">Soccer <span>17</span></button>
+          <button class="sport-tab" type="button">UFC <span>2</span></button>
+        </nav>
+
+        <main id="main" tabindex="-1">
+          <section class="view is-active" id="view-lobby" aria-labelledby="lobbyTitle">
+            <div class="hero-desk">
+              <article class="feature-match">
+                <div class="section-kicker">Featured Matchup · 8:30 PM ET</div>
+                <h2 id="lobbyTitle">Lakers at Celtics</h2>
+                <div class="match-meta">
+                  <span>TD Garden</span>
+                  <span>Last update 12s ago</span>
+                  <span class="live-dot">Market open</span>
+                </div>
+                <div class="match-command">
+                  <div>
+                    <p class="muted">Best available price</p>
+                    <strong class="giant-odd">+124</strong>
+                  </div>
+                  <button class="button button--primary add-leg" type="button" data-leg="Lakers ML +124">Add Lakers ML</button>
+                </div>
+              </article>
+
+              <aside class="market-stack" aria-label="Primary odds">
+                <div class="market-row">
+                  <span>Moneyline</span>
+                  <strong>+124</strong>
+                  <small>Best · FanDuel</small>
+                </div>
+                <div class="market-row">
+                  <span>Spread</span>
+                  <strong>+4.5</strong>
+                  <small>Moved 1.5 pts</small>
+                </div>
+                <div class="market-row">
+                  <span>Total</span>
+                  <strong>221.5</strong>
+                  <small>Under steam</small>
+                </div>
+              </aside>
+            </div>
+
+            <div class="dashboard-grid">
+              <section class="panel panel--wide" aria-labelledby="pulseTitle">
+                <div class="panel__header">
+                  <div>
+                    <p class="section-kicker">Market Pulse</p>
+                    <h3 id="pulseTitle">Fastest line moves</h3>
+                  </div>
+                  <button class="ghost-button" type="button">Watch all</button>
+                </div>
+                <div class="pulse-list" id="pulseList"></div>
+              </section>
+
+              <section class="panel" aria-labelledby="bestPriceTitle">
+                <div class="panel__header">
+                  <div>
+                    <p class="section-kicker">Best Price Now</p>
+                    <h3 id="bestPriceTitle">Top edges</h3>
+                  </div>
+                </div>
+                <div class="edge-list" id="edgeList"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="view" id="view-odds" aria-labelledby="oddsTitle">
+            <div class="screen-header">
+              <div>
+                <p class="section-kicker">Odds Board</p>
+                <h2 id="oddsTitle">Lakers at Celtics</h2>
+                <p class="muted">Compare prices across books. Best lines are labeled and not color-only.</p>
+              </div>
+              <div class="segmented" role="tablist" aria-label="Market type">
+                <button class="is-active" type="button">Moneyline</button>
+                <button type="button">Spread</button>
+                <button type="button">Total</button>
+                <button type="button">Props</button>
+              </div>
+            </div>
+
+            <div class="odds-layout">
+              <section class="panel panel--table" aria-labelledby="tableTitle">
+                <div class="panel__header">
+                  <h3 id="tableTitle">Book comparison</h3>
+                  <span class="updated" id="boardUpdated">Updated 12s ago</span>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col" aria-sort="none">Book</th>
+                        <th scope="col" aria-sort="none">Open</th>
+                        <th scope="col" aria-sort="descending">Current</th>
+                        <th scope="col">Movement</th>
+                        <th scope="col">Hold</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="oddsRows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <aside class="panel research-card" aria-labelledby="researchTitle">
+                <p class="section-kicker">Research</p>
+                <h3 id="researchTitle">Game context</h3>
+                <dl>
+                  <div><dt>Injuries</dt><dd>Tatum probable · Davis questionable</dd></div>
+                  <div><dt>Weather</dt><dd>Indoor venue</dd></div>
+                  <div><dt>Public</dt><dd>64% tickets on Celtics</dd></div>
+                  <div><dt>Sharp</dt><dd>58% money on Lakers</dd></div>
+                </dl>
+                <div class="split-bar" aria-label="Sharp 58 percent, public 42 percent">
+                  <span style="width:58%">Sharp 58%</span><b>Public 42%</b>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="view" id="view-live" aria-labelledby="liveTitle">
+            <div class="screen-header">
+              <div>
+                <p class="section-kicker">Live / In-Play</p>
+                <h2 id="liveTitle">Controlled live market desk</h2>
+                <p class="muted">Auto-refresh pauses while editing the bet slip. Reduced motion users see text labels instead of pulses.</p>
+              </div>
+              <span class="connection" id="connectionStatus">Connected · updated 12s ago</span>
+            </div>
+            <div class="live-grid" id="liveGrid"></div>
+          </section>
+
+          <section class="view" id="view-value" aria-labelledby="valueTitle">
+            <div class="screen-header">
+              <div>
+                <p class="section-kicker">Best Bets / Value Finder</p>
+                <h2 id="valueTitle">Transparent edge scanner</h2>
+                <p class="muted">Mock +EV signals with confidence, stale-price warnings, and methodology affordances.</p>
+              </div>
+              <div class="filter-row">
+                <label>EV threshold <input type="range" min="1" max="10" value="4" /></label>
+                <button class="ghost-button" type="button">Methodology</button>
+              </div>
+            </div>
+            <section class="panel panel--table">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Matchup</th>
+                      <th scope="col">Market</th>
+                      <th scope="col">Book</th>
+                      <th scope="col">Best</th>
+                      <th scope="col">Consensus</th>
+                      <th scope="col">Implied</th>
+                      <th scope="col" aria-sort="descending">Edge</th>
+                      <th scope="col">Confidence</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="valueRows"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section class="view" id="view-tracker" aria-labelledby="trackerTitle">
+            <div class="screen-header">
+              <div>
+                <p class="section-kicker">Bet Tracker</p>
+                <h2 id="trackerTitle">Performance ledger</h2>
+                <p class="muted">Track P&L, ROI, units, and history with export-ready structure.</p>
+              </div>
+              <button class="button button--primary" type="button">Export CSV</button>
+            </div>
+            <div class="metric-grid">
+              <div class="metric"><span>Net P&L</span><strong>+$842</strong></div>
+              <div class="metric"><span>ROI</span><strong>12.8%</strong></div>
+              <div class="metric"><span>Win Rate</span><strong>55.1%</strong></div>
+              <div class="metric"><span>Units Risked</span><strong>62.5u</strong></div>
+            </div>
+            <div class="tracker-layout">
+              <section class="panel" aria-labelledby="chartTitle">
+                <div class="panel__header">
+                  <h3 id="chartTitle">P&L trend</h3>
+                  <span class="updated">Last 30 days</span>
+                </div>
+                <div class="chart" aria-label="Profit and loss rising from negative 120 dollars to positive 842 dollars">
+                  <svg viewBox="0 0 520 220" role="img" aria-labelledby="chartDesc">
+                    <title id="chartDesc">P&L trend line</title>
+                    <path class="chart-grid" d="M20 40H500M20 95H500M20 150H500M20 205H500" />
+                    <path class="chart-area" d="M20 170L90 182L160 132L230 146L300 94L370 108L440 58L500 42V220H20Z" />
+                    <path class="chart-line" d="M20 170L90 182L160 132L230 146L300 94L370 108L440 58L500 42" />
+                  </svg>
+                </div>
+              </section>
+              <form class="panel bet-form" aria-labelledby="logTitle">
+                <h3 id="logTitle">Log wager</h3>
+                <label>Market <input placeholder="Lakers ML" /></label>
+                <label>Odds <input inputmode="decimal" placeholder="+124" /></label>
+                <label>Stake <input inputmode="decimal" placeholder="1.0u" /></label>
+                <label>Bookmaker <input placeholder="FanDuel" /></label>
+                <button class="button button--primary" type="button">Save wager</button>
+              </form>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <aside class="betslip" id="betslip" aria-label="Bet slip">
+        <div class="betslip__header">
+          <div>
+            <p class="section-kicker">BetSlip</p>
+            <h2>Ticket</h2>
+          </div>
+          <button class="icon-button" id="closeSlipButton" type="button" aria-label="Close bet slip">×</button>
+        </div>
+        <div id="slipItems" class="slip-items">
+          <p class="empty">Add a line to calculate payout.</p>
+        </div>
+        <label class="stake-label">
+          Stake
+          <input id="stakeInput" inputmode="decimal" value="25" />
+        </label>
+        <div class="payout">
+          <span>Potential payout</span>
+          <strong id="payoutValue">$0.00</strong>
+        </div>
+        <p class="slip-warning" id="slipWarning" role="status"></p>
+        <button class="button button--primary" type="button">Review ticket</button>
+        <button class="ghost-button" type="button">Set betting limit</button>
+      </aside>
+
+      <nav class="mobile-nav" aria-label="Mobile primary navigation">
+        <button class="is-active" data-view="lobby" type="button">Lobby</button>
+        <button data-view="odds" type="button">Odds</button>
+        <button data-view="live" type="button">Live</button>
+        <button id="mobileSlipButton" type="button">Slip</button>
+        <button data-view="tracker" type="button">Tracker</button>
+      </nav>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
